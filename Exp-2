@@ -1,0 +1,17 @@
+def monoalphabetic_cipher(text, key):
+    alphabet = 'abcdefghijklmnopqrstuvwxyz'
+    result = ''
+    for ch in text:
+        if ch.isupper():
+            result += key[alphabet.index(ch.lower())].upper()
+        elif ch.islower():
+            result += key[alphabet.index(ch)]
+        else:
+            result += ch
+    return result
+
+key = input("Enter substitution key (26 unique letters): ").lower()
+plaintext = input("Enter plaintext: ")
+
+ciphertext = monoalphabetic_cipher(plaintext, key)
+print("Ciphertext:", ciphertext)
