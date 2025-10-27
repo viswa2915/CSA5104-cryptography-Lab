@@ -1,0 +1,51 @@
+def generate_key_matrix(key):
+    key = key.lower().replace("j", "i")
+    matrix = []
+    for char in key:
+        if char not in matrix and char.isalpha():
+            matrix.append(char)
+    for char in "abcdefghijklmnopqrstuvwxyz":
+        if char not in matrix and char != 'j':
+            matrix.append(char)
+    return [matrix[i:i+5] for i in range(0, 25, 5)]
+
+def find_position(matrix, char):
+    for i, row in enumerate(matrix):
+        for j, col in enumerate(row):
+            if col == char:
+                return i, j
+    return None
+
+def playfair_encrypt(plaintext, key):
+    matrix = generate_key_matrix(key)
+    plaintext = plaintext.lower().replace("j", "i")
+    plaintext_pairs = []
+    i = 0
+    while i < len(plaintext):
+        a = plaintext[i]
+        b = ''
+        if i + 1 < len(plaintext):
+            b = plaintext[i + 1]
+        if not a.isalpha():
+            i += 1
+            continue
+        if not b.isalpha() or a == b:
+            b = 'x'
+            i += 1
+        else:
+            i += 2
+        plaintext_pairs.append((a, b))
+    ciphertext = ''
+    for a, b in plaintext_pairs:
+        row1, col1 = find_position(matrix, a)
+        row2, col2 = find_position(matrix, b)
+        if row1 == row2:
+            ciphertext += matrix[row1][(col1 + 1) % 5]
+            ciphertext += matrix[row2][(col2 + 1) % 5]
+        elif col1 == col2:
+            ciphertext += matrix[(row1 + 1) % 5][col1]
+            ciphertext += matrix[(row2 + 1) % 5][col2]
+        else:
+            ciphertext += matrix[row1][col2]
+            ciphertext += matrix[row2][col1]
+    return ciphertext
