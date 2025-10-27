@@ -1,0 +1,35 @@
+def polyalphabetic_cipher(text, key):
+    text = text.lower()
+    key = key.lower()
+    result = ''
+    key_index = 0
+    for ch in text:
+        if ch.isalpha():
+            shift = ord(key[key_index % len(key)]) - ord('a')
+            enc = chr((ord(ch) - ord('a') + shift) % 26 + ord('a'))
+            result += enc
+            key_index += 1
+        else:
+            result += ch
+    return result
+
+def polyalphabetic_decipher(cipher, key):
+    cipher = cipher.lower()
+    key = key.lower()
+    result = ''
+    key_index = 0
+    for ch in cipher:
+        if ch.isalpha():
+            shift = ord(key[key_index % len(key)]) - ord('a')
+            dec = chr((ord(ch) - ord('a') - shift) % 26 + ord('a'))
+            result += dec
+            key_index += 1
+        else:
+            result += ch
+    return result
+
+text = input("Enter plaintext: ")
+key = input("Enter key: ")
+cipher = polyalphabetic_cipher(text, key)
+print("Ciphertext:", cipher)
+print("Decrypted text:", polyalphabetic_decipher(cipher, key))
