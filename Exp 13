@@ -1,0 +1,75 @@
+import numpy as np
+
+def mod26_inv(a):
+    a = a % 26
+    for x in range(1, 26):
+        if (a * x) % 26 == 1:
+            return x
+    return None
+
+def encrypt_with_key(key, plaintext):
+    text = "".join([c for c in plaintext.upper() if c.isalpha()]).replace('J', 'I')
+    if len(text) % 2 == 1:
+        text += 'X'
+    res = ''
+    for i in range(0, len(text), 2):
+        v = np.array([ord(text[i]) - 65, ord(text[i+1]) - 65])
+        cv = key.dot(v) % 26
+        res += chr(int(cv[0]) + 65) + chr(int(cv[1]) + 65)
+    return res
+
+def recover_key_2x2(plain_blocks, cipher_blocks):
+    P = []
+    C = []
+    for b in plain_blocks:
+        P.append([ord(b[0]) - 65, ord(b[1]) - 65])
+    for b in cipher_blocks:
+        C.append([ord(b[0]) - 65, ord(b[1]) - 65])
+    Pm = np.array(P).T % 26
+    Cm = np.array(C).T % 26
+    det = int(round(np.linalg.det(Pm))) % 26
+    invdet = mod26_inv(det)
+    if invdet is None:
+        raise Exception("Plaintext matrix not invertible mod26")
+    adj = np.array([[Pm[1,1], -Pm[0,1]], [-Pm[1,0], Pm[0,0]]]) % 26
+    Pinv = (invdet * adj) % 26
+    K = (Cm.dot(Pinv)) % 26
+    return K.astype(int)
+
+def decrypt_with_key(key, ciphertext):
+    det = int(round(np.linalg.det(key))) % 26
+    invdet = mod26_inv(det)
+    adj = np.array([[key[1,1], -key[0,1]], [-key[1,0], key[0,0]]]) % 26
+    Kinv = (invdet * adj) % 26
+    res = ''
+    for i in range(0, len(ciphertext), 2):
+        v = np.array([ord(ciphertext[i]) - 65, ord(ciphertext[i+1]) - 65])
+        pv = Kinv.dot(v) % 26
+        res += chr(int(pv[0]) + 65) + chr(int(pv[1]) + 65)
+    return res
+
+K1 = np.array([[3,3],[2,5]])
+pt1 = "HELP"
+ct1 = encrypt_with_key(K1, pt1)
+plain_blocks1 = [pt1[0:2], pt1[2:4]]
+cipher_blocks1 = [ct1[0:2], ct1[2:4]]
+Krec1 = recover_key_2x2(plain_blocks1, cipher_blocks1)
+dec1 = decrypt_with_key(Krec1, ct1)
+print("Enter text:", pt1)
+print("Encrypted:", ct1)
+print("Recovered key:")
+print(Krec1)
+print("Decrypted with recovered key:", dec1)
+
+K2 = np.array([[7,8],[11,11]])
+pt2 = "TESTING"
+ct2 = encrypt_with_key(K2, pt2)
+plain_blocks2 = [pt2[0:2], pt2[2:4]]
+cipher_blocks2 = [ct2[0:2], ct2[2:4]]
+Krec2 = recover_key_2x2(plain_blocks2, cipher_blocks2)
+dec2 = decrypt_with_key(Krec2, ct2)
+print("Enter text:", pt2)
+print("Encrypted:", ct2)
+print("Recovered key:")
+print(Krec2)
+print("Decrypted with recovered key:", dec2)
