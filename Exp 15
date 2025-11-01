@@ -1,0 +1,57 @@
+import math
+english_freq = {'a':0.08167,'b':0.01492,'c':0.02782,'d':0.04253,'e':0.12702,'f':0.02228,'g':0.02015,'h':0.06094,'i':0.06966,'j':0.00153,'k':0.00772,'l':0.04025,'m':0.02406,'n':0.06749,'o':0.07507,'p':0.01929,'q':0.00095,'r':0.05987,'s':0.06327,'t':0.09056,'u':0.02758,'v':0.00978,'w':0.02360,'x':0.00150,'y':0.01974,'z':0.00074}
+common_words = ['the','and','that','have','for','not','with','you','this','but','his','from','they','say','she','will','one','all','would','there','their','what','so','up','out','if','about','who','get','which','go','me','is','in','on','of','to','a']
+def decrypt_caesar(ct,shift):
+    res = []
+    for ch in ct:
+        if 'a' <= ch <= 'z':
+            res.append(chr((ord(ch)-97-shift)%26+97))
+        elif 'A' <= ch <= 'Z':
+            res.append(chr((ord(ch)-65-shift)%26+65))
+        else:
+            res.append(ch)
+    return ''.join(res)
+def score_plaintext(pt):
+    s = 0.0
+    lower = pt.lower()
+    letter_count = 0
+    for ch in lower:
+        if 'a' <= ch <= 'z':
+            letter_count += 1
+            p = english_freq.get(ch,1e-6)
+            s += math.log(p)
+    if letter_count == 0:
+        return -1e9
+    words = lower.split()
+    common_count = 0
+    for w in words:
+        for cw in common_words:
+            if cw in w:
+                common_count += 1
+    s += common_count * 4.0
+    s += lower.count(' ') * 0.5
+    return s
+def frequency_attack(ciphertext, top_n=10):
+    candidates = []
+    for shift in range(26):
+        pt = decrypt_caesar(ciphertext, shift)
+        sc = score_plaintext(pt)
+        candidates.append((sc,shift,pt))
+    candidates.sort(reverse=True, key=lambda x:x[0])
+    return candidates[:top_n]
+def print_results(ciphertext, top_n=10):
+    print("Ciphertext:")
+    print(ciphertext)
+    print("\nTop",top_n,"candidates:")
+    results = frequency_attack(ciphertext, top_n)
+    for rank,(sc,shift,pt) in enumerate(results, start=1):
+        print(f"{rank}. shift={shift} score={sc:.2f} plaintext={pt}")
+    print("\n" + "="*60 + "\n")
+
+# Example run 1 (input 1)
+cipher1 = "Khoor Zruog"
+print_results(cipher1,10)
+
+# Example run 2 (input 2)
+cipher2 = "Pmttw Ewztl! Gwtl xvhg qzcj sx zljy."
+print_results(cipher2,10)
