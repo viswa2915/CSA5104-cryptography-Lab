@@ -1,0 +1,9 @@
+import math
+fact25 = math.factorial(25)
+effective = fact25 // 25
+log2_effective = math.log2(effective)
+print("Output 1:")
+print(f"Effectively unique Playfair keys = {effective}")
+print(f"Effectively unique Playfair keys (scientific) = {effective:.6e}")
+print("Output 2:")
+print(f"Approximate power of 2 = 2^{log2_effective:.6f} (≈ 2^{round(log2_effective)})")
