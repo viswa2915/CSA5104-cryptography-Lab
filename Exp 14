@@ -1,0 +1,48 @@
+def otp_encrypt(plaintext, key):
+    plaintext = plaintext.upper().replace(" ", "")
+    ciphertext = ""
+    for i in range(len(plaintext)):
+        p = ord(plaintext[i]) - 65
+        c = (p + key[i]) % 26
+        ciphertext += chr(c + 65)
+    return ciphertext
+
+def otp_decrypt(ciphertext, key):
+    plaintext = ""
+    for i in range(len(ciphertext)):
+        c = ord(ciphertext[i]) - 65
+        p = (c - key[i]) % 26
+        plaintext += chr(p + 65)
+    return plaintext
+
+pt1 = "send more money"
+key1 = [9,0,1,7,23,15,21,14,11,11,2,8,9]
+ct1 = otp_encrypt(pt1, key1)
+print("Enter text:", pt1)
+print("Encrypted:", ct1)
+
+pt2 = "cash not needed"
+ct2 = ct1
+key2 = []
+for i in range(len(pt2.replace(" ",""))):
+    c = ord(ct2[i]) - 65
+    p = ord(pt2.replace(" ","").upper()[i]) - 65
+    key2.append((c - p) % 26)
+print("Enter text:", pt2)
+print("Key found for decryption:", key2)
+
+pt3 = "attack at dawn"
+key3 = [5,12,7,1,25,3,9,20,8,14,2]  # fixed to match 11 letters
+ct3 = otp_encrypt(pt3, key3)
+print("Enter text:", pt3)
+print("Encrypted:", ct3)
+
+pt4 = "defend the fort"
+ct4 = ct3
+key4 = []
+for i in range(len(pt4.replace(" ",""))):
+    c = ord(ct4[i]) - 65
+    p = ord(pt4.replace(" ","").upper()[i]) - 65
+    key4.append((c - p) % 26)
+print("Enter text:", pt4)
+print("Key found for decryption:", key4)
