@@ -1,0 +1,34 @@
+def monoalphabetic_encrypt(plaintext, keyword):
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    keyword_unique = ""
+    for ch in keyword.lower():
+        if ch not in keyword_unique:
+            keyword_unique += ch
+    cipher_alphabet = keyword_unique + ''.join([ch for ch in alphabet if ch not in keyword_unique])
+    table = str.maketrans(alphabet, cipher_alphabet)
+    return plaintext.lower().translate(table)
+
+def monoalphabetic_decrypt(ciphertext, keyword):
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    keyword_unique = ""
+    for ch in keyword.lower():
+        if ch not in keyword_unique:
+            keyword_unique += ch
+    cipher_alphabet = keyword_unique + ''.join([ch for ch in alphabet if ch not in keyword_unique])
+    table = str.maketrans(cipher_alphabet, alphabet)
+    return ciphertext.lower().translate(table)
+
+keyword = "CIPHER"
+plaintext1 = "hello world"
+cipher1 = monoalphabetic_encrypt(plaintext1, keyword)
+plain1_back = monoalphabetic_decrypt(cipher1, keyword)
+print("Plaintext 1:", plaintext1)
+print("Ciphertext 1:", cipher1)
+print("Decrypted 1:", plain1_back)
+
+plaintext2 = "secure communication"
+cipher2 = monoalphabetic_encrypt(plaintext2, keyword)
+plain2_back = monoalphabetic_decrypt(cipher2, keyword)
+print("Plaintext 2:", plaintext2)
+print("Ciphertext 2:", cipher2)
+print("Decrypted 2:", plain2_back)
