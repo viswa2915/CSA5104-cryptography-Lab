@@ -1,0 +1,10 @@
+import math
+fact25 = math.factorial(25)
+log2 = math.log2(fact25)
+print("Output 1:")
+print(f"25! = {fact25}")
+print(f"25! (scientific) = {fact25:.6e}")
+print(f"log2(25!) = {log2:.6f}")
+print("Output 2:")
+print(f"Approximate number of keys ≈ 2^{log2:.6f}")
+print(f"Rounded ≈ 2^{round(log2)}")
